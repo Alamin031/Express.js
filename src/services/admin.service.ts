@@ -6,61 +6,7 @@ import { UserModel } from "../interface/user.interface";
 import { User } from "../models/user.entity";
 
 export class AdminService {
-  async signup(data: any): Promise<AdminModel> {
-    try {
-      const salt = await bcrypt.genSalt();
-      data.password = await bcrypt.hash(data.password, salt);
-      const newAdmin = await Admin.create(data);
-      return newAdmin;
-    } catch (error: any) {
-      throw new Error("Registration failed: " + (error as Error).message);
-    }
-  }
-  // async login(email: string, password: string): Promise<string> {
-  //     const admin = await Admin.findOne({ email });
-  //     if (!admin) {
-  //       throw new Error("Admin not found");
-  //     }
-  //     const isPasswordValid = await bcrypt.compare(password, admin.password);
-  //     if (!isPasswordValid) {
-  //       throw new Error("Invalid password");
-  //     }
-  //     const token = jwt.sign({ adminId: admin._id }, "your-secret-key", {
-  //         expiresIn: "1h",
-  //     });
-  //     return token;
-  // }
 
-  async login(
-    email: string,
-    password: string
-  ): Promise<{ admin: AdminModel; token: string }> {
-    try {
-      const admin = await Admin.findOne({ email });
-
-      if (!admin) {
-        throw new Error("Admin not found");
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, admin.password);
-
-      if (!isPasswordValid) {
-        throw new Error("Invalid password");
-      }
-
-      // Generate a JWT token for the authenticated admin
-      const token = jwt.sign({ adminId: admin._id }, "your-secret-key", {
-        expiresIn: "1h",
-      });
-
-      return { admin, token };
-    } catch (error: any) {
-      throw new Error("Admin login failed: " + error.message);
-    }
-  }
-
-  //get all users
-  //get all users
   async getAllUsers(): Promise<UserModel[]> {
     try {
       const users = await User.find();
@@ -102,6 +48,27 @@ export class AdminService {
     } catch (error: any) {
       throw new Error("Updating user failed: " + error.message);
     }
-  }
+    }
+    
+    //get a 1 user
+    async getUser(userId: string): Promise<UserModel | null> {
+        try {
+            const user = await User.findById(userId);
+            return user ? user.toObject() : null;
+        } catch (error: any) {
+            throw new Error("Fetching user failed: " + error.message);
+        }
+    }
+    
+    //get admin profile
+    async getAdminProfile(adminId: string): Promise<AdminModel | null> {
+        try {
+            const admin = await Admin.findById(adminId);
+            return admin ? admin.toObject() : null;
+        } catch (error: any) {
+            throw new Error("Fetching admin profile failed: " + error.message);
+        }
+    }
+
 }
 export default new AdminService();
