@@ -63,12 +63,12 @@ export class AdminService {
     //get admin profile
     async getAdminProfile(adminId: string): Promise<AdminModel | null> {
         try {
-            const admin = await Admin.findById(adminId);
-            return admin ? admin.toObject() : null;
+          const admin = await Admin.findById(adminId);
+          return admin ? admin.toObject() : null;
         } catch (error: any) {
-            throw new Error("Fetching admin profile failed: " + error.message);
+          throw new Error("Fetching admin profile failed: " + error.message);
         }
-    }
+      }
 
 }
 export default new AdminService();

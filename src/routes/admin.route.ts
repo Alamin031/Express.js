@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/getAllUsers', adminControler.getAllUsers);
 router.get('/getUser/:id', adminControler.getUser);
-router.get('/getAdminProfile/:id', adminControler.getAdminProfile);
+router.get('/getAdminProfile', adminControler.getAdminProfile);
 router.delete('/deleteUser/:id', adminControler.deleteUser);
 router.put('/updateUser/:id', adminControler.updateUser);
 

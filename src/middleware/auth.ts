@@ -17,16 +17,13 @@ declare global {
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    console.log(token);
     if (!token) {
       throw new Error("Please authenticate");
     }
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
-    console.log({ decoded });
     const user = await User.findOne({
       _id: decoded.userId,
     });
-    console.log({ user });
     if (!user) {
       throw new Error();
     }

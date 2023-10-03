@@ -1,3 +1,5 @@
+// adminauth.ts
+
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { Admin } from "../models/admin.entity";
@@ -5,7 +7,7 @@ import { AdminModel } from "../interface/admin.interface";
 
 export const SECRET_KEY: Secret = "your-secret-key";
 
-// Declare a custom interface for Request that includes the user property
+// Declare a custom interface for Request that includes the admin property
 declare global {
   namespace Express {
     interface Request {
@@ -21,24 +23,22 @@ export const adminauth = async (
 ) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    console.log(token);
+
     if (!token) {
       throw new Error("Please authenticate");
     }
+
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
-    console.log({ decoded });
-    const admin = await Admin.findOne({
-      _id: decoded.adminId,
-    });
-    console.log({ admin });
+    const admin = await Admin.findOne({ _id: decoded.adminId });
+
     if (!admin) {
-      throw new Error();
+      throw new Error("Admin not found");
     }
 
-    req.admin = admin;
+    req.admin = admin; // Set the admin property in the request
 
     next();
   } catch (error) {
-    res.status(401).send({ error: "Please authenticate?" });
+    res.status(401).send({ error: "Please authenticate" });
   }
 };
