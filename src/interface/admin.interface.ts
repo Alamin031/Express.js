@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 
-export interface UserModel extends Document {
+export interface AdminModel extends Document {
   name: string;
   email: string;
   phoneNumber?: string;
