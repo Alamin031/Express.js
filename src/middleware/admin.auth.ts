@@ -1,5 +1,3 @@
-// adminauth.ts
-
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { Admin } from "../models/admin.entity";
@@ -7,7 +5,6 @@ import { AdminModel } from "../interface/admin.interface";
 
 export const SECRET_KEY: Secret = "your-secret-key";
 
-// Declare a custom interface for Request that includes the admin property
 declare global {
   namespace Express {
     interface Request {
@@ -35,7 +32,7 @@ export const adminauth = async (
       throw new Error("Admin not found");
     }
 
-    req.admin = admin; // Set the admin property in the request
+    req.admin = admin;
 
     next();
   } catch (error) {

@@ -17,7 +17,10 @@ export class AuthService {
     }
   }
 
-  async adminLogin(email: string, password: string): Promise<{ admin: AdminModel; token: string }> {
+  async adminLogin(
+    email: string,
+    password: string
+  ): Promise<{ admin: AdminModel; token: string }> {
     try {
       const admin = await Admin.findOne({ email });
 
@@ -30,8 +33,6 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new Error("Invalid password");
       }
-
-      // Generate a JWT token for the authenticated admin
       const token = jwt.sign({ adminId: admin._id }, "your-secret-key", {
         expiresIn: "1h",
       });
@@ -40,42 +41,40 @@ export class AuthService {
     } catch (error: any) {
       throw new Error("Admin login failed: " + error.message);
     }
-    }
-    
-    async signup(data: any): Promise<UserModel> {
-        try {
-          const salt = await bcrypt.genSalt();
-          data.password = await bcrypt.hash(data.password, salt);
-          const user = new User(data);
-    
-          await user.save();
-    
-          return user;
-        } catch (error: any) {
-          throw new Error("Registration failed: " + (error as Error).message);
-        }
-    }
-    
-    async login(email: string, password: string): Promise<string> {
-        const user = await User.findOne({ email });
-    
-        if (!user) {
-          throw new Error("User not found");
-        }
-    
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-        if (!isPasswordValid) {
-          throw new Error("Invalid password");
-        }
-    
-        const token = jwt.sign({ userId: user._id }, "your-secret-key", {
-          expiresIn: "1h",
-        });
-    
-        return token;
-      }
+  }
 
-  
+  async signup(data: any): Promise<UserModel> {
+    try {
+      const salt = await bcrypt.genSalt();
+      data.password = await bcrypt.hash(data.password, salt);
+      const user = new User(data);
+
+      await user.save();
+
+      return user;
+    } catch (error: any) {
+      throw new Error("Registration failed: " + (error as Error).message);
+    }
+  }
+
+  async login(email: string, password: string): Promise<string> {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+
+    const token = jwt.sign({ userId: user._id }, "your-secret-key", {
+      expiresIn: "1h",
+    });
+
+    return token;
+  }
 }
 export default new AuthService();

@@ -47,16 +47,16 @@ export const getUser = async (req: Request, res: Response) => {
 
 //get admin profile route
 export const getAdminProfile = async (req: Request, res: Response) => {
-    try {
-      const adminId = req.admin?._id; // Use req.admin to get the admin ID
-      const adminProfile = await adminService.getAdminProfile(adminId);
-  
-      if (!adminProfile) {
-        res.status(404).json({ error: "Admin profile not found" });
-      } else {
-        res.status(200).json(adminProfile);
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+  try {
+    const adminId = req.admin?._id; // Use req.admin to get the admin ID
+    const adminProfile = await adminService.getAdminProfile(adminId);
+
+    if (!adminProfile) {
+      res.status(404).json({ error: "Admin profile not found" });
+    } else {
+      res.status(200).json(adminProfile);
     }
-  };
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -5,8 +5,6 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 
 export class UserService {
-  
-
   async getUserProfile(userId: string) {
     try {
       const userProfile = await User.findById(userId);
@@ -23,7 +21,7 @@ export class UserService {
     }
   }
   // //update user profile
-  async updateUserProfile(userId: string, data: any) { 
+  async updateUserProfile(userId: string, data: any) {
     try {
       const user = await User.findById(userId);
 
@@ -44,8 +42,8 @@ export class UserService {
     } catch (error: any) {
       throw new Error("Updating user profile failed: " + error.message);
     }
-  } 
-   
+  }
+
   async deleteUser(userId: string): Promise<UserModel | null> {
     try {
       const deletedUser = await User.findByIdAndDelete(userId);
@@ -53,7 +51,7 @@ export class UserService {
     } catch (error: any) {
       throw new Error("Deleting user failed: " + error.message);
     }
-  }  
+  }
 }
 
 export default new UserService();

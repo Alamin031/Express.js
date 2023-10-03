@@ -5,7 +5,6 @@ import { UserModel } from "../interface/user.interface";
 
 export const SECRET_KEY: Secret = "your-secret-key";
 
-// Declare a custom interface for Request that includes the user property
 declare global {
   namespace Express {
     interface Request {

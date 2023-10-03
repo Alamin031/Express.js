@@ -6,7 +6,6 @@ import { UserModel } from "../interface/user.interface";
 import { User } from "../models/user.entity";
 
 export class AdminService {
-
   async getAllUsers(): Promise<UserModel[]> {
     try {
       const users = await User.find();
@@ -48,27 +47,26 @@ export class AdminService {
     } catch (error: any) {
       throw new Error("Updating user failed: " + error.message);
     }
-    }
-    
-    //get a 1 user
-    async getUser(userId: string): Promise<UserModel | null> {
-        try {
-            const user = await User.findById(userId);
-            return user ? user.toObject() : null;
-        } catch (error: any) {
-            throw new Error("Fetching user failed: " + error.message);
-        }
-    }
-    
-    //get admin profile
-    async getAdminProfile(adminId: string): Promise<AdminModel | null> {
-        try {
-          const admin = await Admin.findById(adminId);
-          return admin ? admin.toObject() : null;
-        } catch (error: any) {
-          throw new Error("Fetching admin profile failed: " + error.message);
-        }
-      }
+  }
 
+  //get a 1 user
+  async getUser(userId: string): Promise<UserModel | null> {
+    try {
+      const user = await User.findById(userId);
+      return user ? user.toObject() : null;
+    } catch (error: any) {
+      throw new Error("Fetching user failed: " + error.message);
+    }
+  }
+
+  //get admin profile
+  async getAdminProfile(adminId: string): Promise<AdminModel | null> {
+    try {
+      const admin = await Admin.findById(adminId);
+      return admin ? admin.toObject() : null;
+    } catch (error: any) {
+      throw new Error("Fetching admin profile failed: " + error.message);
+    }
+  }
 }
 export default new AdminService();
