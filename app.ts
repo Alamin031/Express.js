@@ -6,6 +6,7 @@ import userRouter from "./src/routes/user.route";
 import { auth } from "./src/middleware/auth";
 import { adminauth } from "./src/middleware/admin.auth";
 import adminRouter from "./src/routes/admin.route";
+import productRouter from "./src/routes/products.route";
 
 
 dotenv.config();
@@ -46,7 +47,7 @@ app.get("/", (req, res) => {
 app.use("/api", authRouter);
 app.use("/api/users", auth, userRouter);
 app.use("/api/admins", adminauth, adminRouter);
-
+app.use("/api/products", productRouter);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

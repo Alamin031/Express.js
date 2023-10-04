@@ -9,5 +9,4 @@ router.put('/updateUserProfile/:id', userController.updateUserProfile);
 router.delete('/deleteUser/:id', userController.deleteUser);
 
 
-
 export default router;
