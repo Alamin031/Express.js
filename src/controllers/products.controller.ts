@@ -3,6 +3,7 @@ import productService from "../services/products.service";
 import fs from "fs";
 import csvParser from "csv-parser";
 import { ProductModel } from "../interface/products.interface";
+import { removeOldFile } from "../middleware/fileUtils";
 
 // Create new product
 export const createProduct = async (req: Request, res: Response) => {
@@ -52,20 +53,21 @@ export const updateProduct = async (req: Request, res: Response) => {
 export const uploadCSV = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      res.status(400).json({ error: "No CSV file uploaded" });
+      res.status(400).json({ error: 'No CSV file uploaded' });
       return;
     }
     const filePath = req.file.path;
+    const products: ProductModel[] = [];
 
     fs.createReadStream(filePath)
       .pipe(csvParser())
-      .on("data", async (row) => {
+      .on('data', (row) => {
         const price = parseFloat(row.price);
         const originalPrice = parseFloat(row.originalPrice);
 
         const product: ProductModel = {
           price: price,
-          discount: price - originalPrice,
+          discount: originalPrice - price,
           tag: row.tag,
           flashSale: row.flashSale,
           status: row.status,
@@ -80,12 +82,20 @@ export const uploadCSV = async (req: Request, res: Response): Promise<void> => {
           unit: row.unit,
           sku: row.sku,
         };
-        // await productService.createProduct(product);
-        await productService.createBulkProducts([product]);
+        products.push(product);
       })
-      .on("end", () => {
-        res.status(200).json({ message: "CSV file successfully processed" });
+      .on('end', async () => {
+        try {
+          console.log("myd");
+          await productService.createBulkProducts(products, filePath);
+          removeOldFile(filePath);
+
+          res.status(200).json({ message: 'CSV file successfully processed' });
+        } catch (error) {
+          res.status(400).json({ error: (error as Error).message });
+        }
       });
+
   } catch (error) {
     res.status(400).json({ error: (error as Error).message });
   }
@@ -112,15 +122,21 @@ export const deleteAllProducts = async (req: Request, res: Response) => {
   }
 };
 
-export const createBulkProducts = async (req: Request, res: Response) => {
-  try {
-    const productsData: ProductModel[] = req.body;
-    const createdProducts = await productService.createBulkProducts(productsData);
-    res.status(201).json(createdProducts);
-  } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
-  }
-};
+// export const createBulkProducts = async (req: Request, res: Response) => {
+//   try {
+//     const productsData: ProductModel[] = req.body;
+//     const oldFilePath: string = req.file ? req.file.filename : '';
+
+//     const createdProducts = await productService.createBulkProducts(
+//       productsData,
+//       oldFilePath
+//     );
+
+//     res.status(201).json(createdProducts);
+//   } catch (error) {
+//     res.status(400).json({ error: (error as Error).message });
+//   }
+// };
 
 // // Get products by category
 // export const getProductsByCategory = async (req: Request, res: Response) => {

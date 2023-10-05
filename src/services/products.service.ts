@@ -1,7 +1,7 @@
 import { Product } from "../models/products.entity";
 import { ProductModel } from "../interface/products.interface";
-import fs from 'fs';
-
+import fs from "fs";
+import { removeOldFile } from "../middleware/fileUtils";
 
 export class ProductService {
   async createProduct(productData: ProductModel): Promise<ProductModel> {
@@ -71,7 +71,11 @@ export class ProductService {
   //         throw new Error("Error while creating products: " + error.message);
   //     }
   //     }
-  async createBulkProducts(products: ProductModel[]): Promise<ProductModel[]> {
+
+  async createBulkProducts(
+    products: ProductModel[],
+    oldFilePath: string
+  ): Promise<ProductModel[]> {
     try {
       const bulkUpdateOps = products.map((product) => ({
         updateOne: {
@@ -80,21 +84,25 @@ export class ProductService {
           upsert: true,
         },
       }));
-      const oldFilePath = 'path/to/oldFile.txt'; // Provide the old file path here
 
       const result = await Product.bulkWrite(bulkUpdateOps, { ordered: false });
+
       if (result.upsertedCount > 0 || result.modifiedCount > 0) {
         const createdOrUpdatedProducts: ProductModel[] = products.map(
           (product) => ({
             ...product,
           })
         );
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-          console.log(`Old file at ${oldFilePath} has been removed.`);
+
+        if (oldFilePath && fs.existsSync(oldFilePath)) {
+          removeOldFile(oldFilePath);
         }
         return createdOrUpdatedProducts;
       } else {
+        if (fs.existsSync(oldFilePath)) {
+          removeOldFile(oldFilePath);
+        }
+
         return [];
       }
     } catch (error: any) {

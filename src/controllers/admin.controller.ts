@@ -48,7 +48,7 @@ export const getUser = async (req: Request, res: Response) => {
 //get admin profile route
 export const getAdminProfile = async (req: Request, res: Response) => {
   try {
-    const adminId = req.admin?._id; // Use req.admin to get the admin ID
+    const adminId = req.admin?._id; 
     const adminProfile = await adminService.getAdminProfile(adminId);
 
     if (!adminProfile) {
